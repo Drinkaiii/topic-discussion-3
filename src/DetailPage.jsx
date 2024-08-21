@@ -24,13 +24,12 @@ const MovieDetails = () => {
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>{details.title}</h1>
+      <p><strong>Overview:</strong> {details.overview}</p>
       <img
         src={`https://image.tmdb.org/t/p/w500${details.poster_path}`}
         alt={details.title}
         style={styles.poster}
       />
-      {console.log(details)}
-      <p><strong>Overview:</strong> {details.overview}</p>
       <p><strong>Release Date:</strong> {details.release_date}</p>
       <p><strong>Vote Average:</strong> {details.vote_average}</p>
       <p><strong>Vote Count:</strong> {details.vote_count}</p>
