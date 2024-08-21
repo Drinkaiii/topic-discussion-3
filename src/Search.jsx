@@ -9,7 +9,7 @@ const SearchBar = () => {
   const username = 'elastic';
   const password = 'YFqFY2Mr=UQMKupkuqN3';
   const credentials = btoa(`${username}:${password}`);
-
+  const host = "http://localhost:9200";
 
   const handleInputChange = async (e) => {
     const value = e.target.value;
@@ -26,7 +26,7 @@ const SearchBar = () => {
 
     if (value.length > 0) {
       const response = await fetch(
-        `http://localhost:9200/movies/_search`,
+        `${host}/movies/_search`,
         {
           method: 'POST',
           headers: {
@@ -57,12 +57,21 @@ const SearchBar = () => {
     }
   };
 
+  const handleEnterKeyDown = (e) => {
+    if (e.key === 'Enter' && suggestions.length > 0) {
+      localStorage.setItem('searchResults', JSON.stringify(suggestions));
+      navigate('/results');
+    }
+  };
+
   return (
-    <div>
+    <div style={{display: 'flex',flexDirection: 'column'}}>
+      <h1>Movie Search</h1>
       <TextField
         fullWidth
         value={query}
         onChange={handleInputChange}
+        onKeyDown={handleEnterKeyDown}
         placeholder="Search..."
         variant="outlined"
       />

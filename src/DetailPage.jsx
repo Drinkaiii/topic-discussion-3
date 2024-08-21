@@ -4,9 +4,8 @@ const MovieDetails = () => {
   const [details, setDetails] = useState(null);
 
   useEffect(() => {
-    // 從 localStorage 中獲取資料
-    const storedDetails = localStorage.getItem('selectedData');
-    
+
+    const storedDetails = localStorage.getItem('selectedData');    
     if (storedDetails) {
       try {
         const parsedDetails = JSON.parse(storedDetails);
