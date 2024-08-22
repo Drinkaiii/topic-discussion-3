@@ -24,7 +24,9 @@ const MovieDetails = () => {
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>{details.title}</h1>
-      <p><strong>Overview:</strong> {details.overview}</p>
+      <p>{details.title_zh}</p>
+      <p>{details.overview}</p>
+      <p>{details.overview_zh}</p>
       <img
         src={`https://image.tmdb.org/t/p/w500${details.poster_path}`}
         alt={details.title}

@@ -1,25 +1,31 @@
 import React, { useState } from 'react';
-import { TextField, List, ListItem, ListItemText, Paper } from '@mui/material';
+import { TextField, List, ListItem, ListItemText, Paper, Button, ButtonGroup, Typography, Card, CardMedia, CardContent } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const SearchBar = () => {
-  const [query, setQuery] = useState('');
+
+  //hocks
+  const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
+  const [randomMovie, setRandomMovie] = useState(null);
   const navigate = useNavigate(); 
+
+  //授權相關
   const username = 'elastic';
   const password = 'YFqFY2Mr=UQMKupkuqN3';
   const credentials = btoa(`${username}:${password}`);
-  const host = "http://localhost:9200";
+  const host = "http://203.204.185.67:9200";
 
-  const handleInputChange = async (e) => {
+  // 跳出建議選項：fetch -> 儲存 suggestions -> 重新渲染畫面
+  async function handleInputChange(e){
     const value = e.target.value;
     setQuery(value);
 
     const query = {
       query: {
         query_string: {
-          default_field: "title",
-          query: `*${value}*`
+          "query": `*${value}*`,
+          "fields": ["title", "title_zh"]
         }
       }
     };
@@ -49,7 +55,8 @@ const SearchBar = () => {
     }
   };
 
-  const handleSuggestionClick = (id) => {
+  // 設定建議選項點擊功能：儲存 localstorage -> 跳轉畫面
+  function handleSuggestionClick (id) {
     const selectedData = suggestions.find((suggestion) => suggestion.id === id);
     if (selectedData) {
       localStorage.setItem('selectedData', JSON.stringify(selectedData));
@@ -57,16 +64,42 @@ const SearchBar = () => {
     }
   };
 
-  const handleEnterKeyDown = (e) => {
-    if (e.key === 'Enter' && suggestions.length > 0) {
-      localStorage.setItem('searchResults', JSON.stringify(suggestions));
+  // 設定點選 enter 功能：儲存 localstorage -> 跳轉畫面
+  function handleEnterKeyDown(e){
+    if (e.key === 'Enter') {
+      localStorage.setItem("keyword", query);
+      console.log(query);
       navigate('/results');
+    }
+  };
+
+  // 設定分類選項點擊功能：儲存 localstorage -> 跳轉畫面
+  function handleCategoryClick (genres) {
+    const selectedData = suggestions.find((suggestion) => suggestion.id === id);
+    if (selectedData) {
+      localStorage.setItem('selectedData', JSON.stringify(selectedData));
+      navigate('/details');
     }
   };
 
   return (
     <div style={{display: 'flex',flexDirection: 'column'}}>
-      <h1>Movie Search</h1>
+      
+      <Typography variant="h2" gutterBottom style={{ fontWeight: 'bold', marginTop: '20px' }}>
+        Movie Search
+      </Typography>
+
+      <ButtonGroup variant="outlined" color="primary" style={{ marginBottom: '10px', width: "100%" }}>
+        <Button style={{ flexGrow: 1 }} onClick={() => handleKeywordClick('Action')}>動作片</Button>
+        <Button style={{ flexGrow: 1 }} onClick={() => handleKeywordClick('Adventure')}>冒險片</Button>
+        <Button style={{ flexGrow: 1 }} onClick={() => handleKeywordClick('Comedy')}>喜劇片</Button>
+        <Button style={{ flexGrow: 1 }} onClick={() => handleKeywordClick('Drama')}>劇情片</Button>
+        <Button style={{ flexGrow: 1 }} onClick={() => handleKeywordClick('Horror')}>恐怖片</Button>
+        <Button style={{ flexGrow: 1 }} onClick={() => handleKeywordClick('Fantasy')}>奇幻片</Button>
+        <Button style={{ flexGrow: 1 }} onClick={() => handleKeywordClick('Romance')}>愛情片</Button>
+        <Button style={{ flexGrow: 1 }} onClick={() => handleKeywordClick('Animation')}>動畫片</Button>
+      </ButtonGroup>
+
       <TextField
         fullWidth
         value={query}
@@ -76,7 +109,7 @@ const SearchBar = () => {
         variant="outlined"
       />
       {suggestions.length > 0 && (
-        <Paper style={{ maxHeight: 200, overflow: 'auto', marginTop: '5px' }}>
+        <Paper style={{ overflow: 'auto', marginTop: '5px' }}>
           <List>
             {suggestions.map((suggestion) => (
               <ListItem button key={suggestion.id} onClick={() => handleSuggestionClick(suggestion.id)}>
@@ -86,7 +119,28 @@ const SearchBar = () => {
           </List>
         </Paper>
       )}
+
+      {randomMovie && (
+        <Card style={{ marginTop: '20px', maxWidth: '800px', width: '100%' }}>
+          <CardMedia
+            component="img"
+            height="300"
+            image={randomMovie.image || 'https://via.placeholder.com/800x300.png?text=Movie+Image'} // replace with the actual image field
+            alt={randomMovie.title}
+          />
+          <CardContent>
+            <Typography variant="h5" component="div">
+              {randomMovie.title}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {randomMovie.description || 'No description available.'}  {/* replace with the actual description field */}
+            </Typography>
+          </CardContent>
+        </Card>
+      )}
+
     </div>
+
   );
 };
 

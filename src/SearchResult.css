@@ -1,0 +1,5 @@
+em {
+  font-style: normal; /* 取消斜體 */
+  font-weight: bold; /* 設置粗體 */
+  color: rgb(184, 139, 15); /* 改變文字顏色 */
+}
